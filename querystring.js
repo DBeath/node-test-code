@@ -2,6 +2,8 @@ var querystring = require('querystring');
 var crypto = require('crypto');
 var urllib = require('url');
 
+var express = require('express');
+
 var response_body = "This is a response.";
 var secret = 'TopSecret';
 var topic = 'http://test.com';
@@ -40,3 +42,12 @@ var fullurl = url+'/?'+qs;
 var params = urllib.parse(fullurl, true, true);
 
 console.log(params);
+
+var app = express();
+
+app.get('/', function (req, res) {
+	console.log('----------------------------------');
+	console.log(req.query['hub.mode']);
+});
+
+app.listen(4000);
