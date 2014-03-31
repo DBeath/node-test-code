@@ -48,6 +48,7 @@ var app = express();
 app.get('/', function (req, res) {
 	console.log('----------------------------------');
 	console.log(req.query['hub.mode']);
+	console.log(req.query);
 });
 
 app.listen(4000);
