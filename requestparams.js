@@ -10,6 +10,11 @@ var topic = 'http://test.com',
   encrypted_secret = crypto.createHmac("sha1", "topsecret").update(topic).digest("hex");
   hub_encryption = crypto.createHmac('sha1', encrypted_secret).update(response_body).digest('hex');
 
+var callbackUrl = 'http://localhost:4000/pubsub' + 
+        (this.callbackUrl.replace(/^https?:\/\//i, "").match(/\//)?"":"/") +
+        (this.callbackUrl.match(/\?/)?"&":"?") +
+        "topic="+encodeURIComponent(topic)+
+        "&hub="+encodeURIComponent(hub);
 
 var options = {
 	url: 'http://localhost:8000/test',
