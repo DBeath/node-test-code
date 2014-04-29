@@ -3,8 +3,37 @@ var http = require('http');
 var bl = require('bl');
 var crypto = require('crypto');
 var urllib = require('url');
+var moment = require('moment');
 
-var response_body = "This is a response.";
+var thisNow = moment().unix();
+var topic = 'http://test.com';
+var topicTitle = 'Test Feed';
+var itemTitle = 'This is a test';
+var itemStatus = 'Test';
+var item2Title = 'This is the second item';
+var response_body = JSON.stringify(
+  {
+    "title": topicTitle,
+    "status": {
+      "lastFetch": thisNow,
+      "http": 200
+    },
+    "items": [
+    {
+      "title": itemTitle,
+      "published": thisNow,
+      "status": itemStatus
+    },
+    {
+      "title": item2Title,
+      "status": itemStatus
+    }
+    ]
+  }
+);
+
+var jsonbody = JSON.parse(response_body);
+
 var secret = 'TopSecret';
 var topic = 'http://test.com';
 var encrypted_secret = crypto.createHmac("sha1", secret).update(topic).digest("hex");
@@ -33,34 +62,67 @@ var options = {
 	form: form
 }
 
+
 var notification = function (){
 	return request.post(options);
 }
 
 var error = new Error('message');
+// var server = http.createServer(function (req, res) {
+// 	console.log(req);
+// 	var params = urllib.parse(req.url, true, true).query;
+// 	console.log(params);
+// 	console.log(req.headers);
+
+// 	hmac = crypto.createHmac('sha1', crypto.createHmac("sha1", secret).update(topic).digest("hex"));
+// 	console.log(hmac);
+
+// 	if(req.headers['content-type'] === 'text/plain'){
+// 		console.log('header success');
+// 	};
+
+// 	try {
+// 		hmac.update(body);
+// 	} catch (err) {
+// 		console.log('Could not update hmac');
+// 		console.log(err);
+// 	};
+
+// 	// req.pipe(bl(function (err, data) {
+// 	// 	if (err) throw err;
+// 	// 	data = data.toString();
+// 	// 	hmac.update(data);
+// 	// 	console.log(data);
+// 	// 	console.log(hmac.digest("hex").toLowerCase());
+// 	// }));
+// });
+
+// server.listen(8000, function () {
+// 	console.log(urllib.format(options));
+// 	request.post(options);
+// });
+
 var server = http.createServer(function (req, res) {
-	var params = urllib.parse(req.url, true, true).query;
-	console.log(params);
-	console.log(req.headers);
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  res.end(response_body);
+}).listen(3000);
 
-	hmac = crypto.createHmac('sha1', crypto.createHmac("sha1", secret).update(topic).digest("hex"));
-	console.log(hmac);
+request.post('http://localhost:3000', function (err, res, body) {
+  var hmac = crypto.createHmac('sha1', crypto.createHmac("sha1", secret).update(topic).digest("hex"));
 
-	if(req.headers['content-type'] === 'text/plain'){
-		console.log('header success');
-	}
+  console.log(body);
+  try {
+    hmac.update(body);
+  } catch(err) {
+    console.log(err);
+  };
 
-	req.pipe(bl(function (err, data) {
-		if (err) throw err;
-		data = data.toString();
-		hmac.update(data);
-		console.log(data);
-		console.log(hmac.digest("hex").toLowerCase());
-	}));
-});
+  if (hmac.digest('hex').toLowerCase() != hub_encryption) {
+    console.log('not correct signature');
+  } else {
+    console.log('correct signature');
+  }
 
-server.listen(8000, function () {
-	console.log(urllib.format(options));
-	request.get(options);
-});
+  process.exit();
+})
 
