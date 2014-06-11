@@ -27,13 +27,18 @@ MongoClient.connect('mongodb://localhost/test', function (err, db) {
 	// 	});
 	// });
 
-	collection.update({id: 'stuff'}, i, {upsert:true},function (err, result){
-		if (err) return console.log(err);
+	// collection.update({id: 'stuff'}, i, {upsert:true},function (err, result){
+	// 	if (err) return console.log(err);
+	// 	console.log(result);
+	// 	collection.findOne({id: id}, function (err, item) {
+	// 		if (err) return console.log(err);
+	// 		console.log(item);
+	// 		db.close();
+	// 	});
+	// });
+
+	collection.findOne({'status':'testing'}, function (err, result) {
+		if (err) console.log('Received error: ' + err);
 		console.log(result);
-		collection.findOne({id: id}, function (err, item) {
-			if (err) return console.log(err);
-			console.log(item);
-			db.close();
-		});
 	});
 });

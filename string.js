@@ -1,5 +1,5 @@
-var string ="this\nis\na\ntest,testing2,\ntesting3";
-var split = string.split(/[\s,]+/);
+var string ="this\nis\na\ntest,testing2,\ntesting3;testing4:testing5";
+var split = string.split(/[\s,:;]+/);
 
 console.log(string);
 console.log();

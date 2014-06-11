@@ -16,3 +16,8 @@ console.log('--------------------------');
 console.log(moment().unix());
 
 console.log(moment().subtract('d', 1).unix());
+
+var unix = moment().unix();
+console.log('Unix time is '+ unix);
+var day = moment.unix(unix);
+console.log('Date is '+day);
