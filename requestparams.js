@@ -10,12 +10,6 @@ var topic = 'http://test.com',
   encrypted_secret = crypto.createHmac("sha1", "topsecret").update(topic).digest("hex");
   hub_encryption = crypto.createHmac('sha1', encrypted_secret).update(response_body).digest('hex');
 
-var callbackUrl = 'http://localhost:4000/pubsub' + 
-        (this.callbackUrl.replace(/^https?:\/\//i, "").match(/\//)?"":"/") +
-        (this.callbackUrl.match(/\?/)?"&":"?") +
-        "topic="+encodeURIComponent(topic)+
-        "&hub="+encodeURIComponent(hub);
-
 var options = {
 	url: 'http://localhost:8000/test',
 	headers: {
@@ -26,11 +20,11 @@ var options = {
 	},
 	body: response_body,
 	form: {
-        "hub.callback": 'http://test.com',
-        "hub.mode": 'subscribe',
-        "hub.topic": 'http://feed.com/feed',
-        "hub.verify": "sync",
-        'format': 'json'
+        'hub.callback': 'http://test.com',
+        'hub.mode': 'subscribe',
+        'hub.topic': 'http://feed.com/feed',
+        'hub.verify': "sync",
+        format: 'json'
     }
 }
 
@@ -60,6 +54,7 @@ var server = http.createServer(function (req, res) {
 
 	var params = urllib.parse(req.url, true, true);
 	console.log(params);
+	console.log('------------------------------');
 
 	var body = '';
 	req.on('data', function (chunk) {
