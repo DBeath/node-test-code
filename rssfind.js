@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 
 var url = 'http://stratechery.com/';
 
-var re = new RegExp('Comments');
+var re = new RegExp(/([cC]omment)/);
 
 request.get(url, function (err, response, body) {
   var $ = cheerio.load(body);
@@ -16,10 +16,13 @@ request.get(url, function (err, response, body) {
     if ($(this).attr('type') == 'application/rss+xml') {
       var title = $(elem).attr('title');
       if (re.test(title)) {
-        console.log('Comments feed: ' + $(this).attr('href'));
+        console.log('Comments title: ' + $(this).attr('title'));
+      }
+      if (re.test($(this).attr('href'))) {
+        console.log('Comments href: ' + $(this).attr('href'));
       }
       console.log('Found RSS ' + $(this).attr('href'));
-      //console.log($(this));
+      //console.log($(this).attr('title'));
     };
   });
 });
