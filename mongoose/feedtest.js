@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var uniqueValidator = require('mongoose-unique-validator');
 
 mongoose.connect('mongodb://localhost/mongoose_test');
 var db = mongoose.connection;
@@ -40,3 +41,5 @@ Feed.schema.path('status').validate(function (value) {
 }, 'Invalid Status');
 
 Feed.schema.path('topic').index({unique: true});
+
+Feed.schema.plugin(uniqueValidator);
